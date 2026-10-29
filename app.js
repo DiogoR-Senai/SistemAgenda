@@ -95,7 +95,7 @@ function renderDays() {
           field("input", item.end, "17:00", (v) => (item.end = v), { type: "time" }));
         const row = el("div", { class: "row" },
           timeBox,
-          field("textarea", item.text, "Participantes / Atividade — ex.: Joelso participa de reunião…", (v) => (item.text = v), { rows: 1 }),
+          field("textarea", item.text, "Participantes / Atividade — ex.: Joelso participa de reunião…", (v) => (item.text = v), { className: "txt", rows: 1 }),
           field("textarea", item.place, "Local (digite livremente)", (v) => (item.place = v), { className: "loc", rows: 1 }),
           delBtn(() => { list.splice(i, 1); save(); draw(); }));
         rows.append(row);

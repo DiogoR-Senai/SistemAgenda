@@ -179,3 +179,60 @@ body {
 .brand { background: #fff; border-radius: 10px; padding: 5px 12px; display: flex; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
 .brand img { height: 30px; width: auto; display: block; }
 @media print { .brand { padding: 2px 8px; box-shadow: none; justify-self: start; } .brand img { height: 22px; } }
+
+/* ---------- Responsivo (somente tela; impressão não é afetada) ---------- */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+img { max-width: 100%; }
+
+/* Notebook / desktop largo */
+@media screen and (min-width: 1200px) {
+  .sheet { max-width: 1120px; }
+}
+
+/* Tablet */
+@media screen and (min-width: 641px) and (max-width: 900px) {
+  .sheet { padding: 0 20px; }
+  .row { grid-template-columns: minmax(0, 220px) minmax(0, 1fr) 34px; }
+  .row .time { grid-column: 1; grid-row: 1; }
+  .row .txt { grid-column: 2; grid-row: 1; }
+  .row .loc { grid-column: 1 / 3; grid-row: 2; }
+  .row .del { grid-column: 3; grid-row: 1; }
+  .row.simple { grid-template-columns: 150px minmax(0, 1fr) 34px; }
+  .row.note .del { grid-column: 2; }
+}
+
+/* Celular */
+@media screen and (max-width: 640px) {
+  .topbar { position: static; padding: 10px 12px; gap: 10px; }
+  .brand img { height: 26px; }
+  .topbar-title { font-size: 17px; }
+  .actions { flex: 1 1 100%; gap: 6px; flex-wrap: nowrap; }
+  .actions > .btn, .actions > .menu { flex: 1 1 0; min-width: 0; }
+  .actions .btn { width: 100%; justify-content: center; }
+  .actions .btn.icon { flex: 0 0 auto; width: auto; }
+  .menu-list { min-width: 0; width: max-content; max-width: calc(100vw - 24px); }
+
+  .sheet { margin: 14px auto 40px; padding: 0 10px; }
+  .week-nav { padding: 12px; gap: 10px; }
+  .week-info { min-width: 0; }
+  .week-label { font-size: 18px; }
+  .week-nav .btn { flex: 1 1 100%; justify-content: center; }
+
+  .bar { padding: 9px 12px; font-size: 13px; }
+  .rows { padding: 8px 8px 2px; }
+  .row { padding: 8px; gap: 8px; }
+  .add { margin: 4px 8px 12px; width: calc(100% - 16px); }
+
+  /* 16px evita o zoom automático do iPhone ao tocar nos campos */
+  .row input, .row textarea, .row select { font-size: 16px; }
+  .time { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+  .toast { width: max-content; max-width: calc(100vw - 24px); text-align: center; }
+}
+
+/* Telas de toque: alvos maiores */
+@media screen and (pointer: coarse) {
+  .btn, .menu-list button { min-height: 44px; }
+  .nav-btn { width: 44px; height: 44px; }
+  .del { width: 40px; height: 40px; }
+  .add { min-height: 44px; }
+}
