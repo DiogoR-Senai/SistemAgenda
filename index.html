@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agenda Semanal SENAI</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar no-print">
+    <div class="brand"><img src="img/Logo.png" alt="SENAI"></div>
+    <div class="topbar-title">Agenda Semanal</div>
+    <div class="actions">
+      <button id="btnCopy" class="btn ghost" title="Copiar a agenda como texto"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg><span>Copiar</span></button>
+      <button id="btnPrint" class="btn ghost" title="Imprimir a agenda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="7"/><path d="M6 18H4a1 1 0 0 1-1-1v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a1 1 0 0 1-1 1h-2"/></svg><span>Imprimir</span></button>
+      <div class="menu" id="dlMenu">
+        <button id="btnDownload" class="btn primary" aria-haspopup="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/></svg><span>Baixar</span><i class="caret"></i></button>
+        <div class="menu-list">
+          <button data-fmt="pdf"><b class="tag pdf">PDF</b> Documento PDF</button>
+          <button data-fmt="xlsx"><b class="tag xls">XLS</b> Planilha Excel (.xlsx)</button>
+          <button data-fmt="doc"><b class="tag doc">DOC</b> Word (.doc) editável</button>
+        </div>
+      </div>
+      <button id="btnClear" class="btn danger icon" title="Limpar esta semana" aria-label="Limpar esta semana"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m6 6 1 14h10l1-14"/></svg></button>
+    </div>
+  </header>
+
+  <main class="sheet">
+    <section class="week-nav no-print">
+      <button id="prevWeek" class="nav-btn" aria-label="Semana anterior">‹</button>
+      <div class="week-info">
+        <div id="weekLabel" class="week-label"></div>
+        <div id="weekHint" class="week-hint"></div>
+      </div>
+      <button id="nextWeek" class="nav-btn" aria-label="Próxima semana">›</button>
+      <button id="goNext" class="btn ghost small">Ir para a próxima semana</button>
+    </section>
+
+    <div class="print-header">
+      <div class="brand"><img src="img/Logo.png" alt="SENAI"></div>
+      <div class="print-title">AGENDA SEMANAL</div>
+      <div id="printWeek" class="print-week"></div>
+    </div>
+
+    <div id="days"></div>
+
+    <section class="block">
+      <h2 class="bar">ANIVERSARIANTES</h2>
+      <div id="birthdays" class="rows"></div>
+      <button class="add no-print" id="addBirthday">+ Adicionar aniversariante</button>
+    </section>
+
+    <section class="block">
+      <h2 class="bar">OBSERVAÇÕES</h2>
+      <div id="notes" class="rows"></div>
+      <button class="add no-print" id="addNote">+ Adicionar observação</button>
+    </section>
+  </main>
+
+
+  <div id="toast" class="toast"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+  <script src="img/logo.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
