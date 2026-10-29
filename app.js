@@ -381,7 +381,7 @@ async function exportXlsx() {
 }
 
 /* ---------- Word ---------- */
-function exportDoc() {
+function exportDoc(forImage = false) {
   const d = collect();
   const esc = (s) => String(s || "").replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])).replace(/\n/g, "<br>");
   const cell = (t, extra = "") => `<td ${extra} style="border:1px solid #000;padding:4px;font-size:9pt">${t || "&nbsp;"}</td>`;
@@ -400,20 +400,22 @@ function exportDoc() {
   (d.notes.length ? d.notes : [{ text: "" }]).forEach((n) =>
     (rows += `<tr style="height:20pt">${cell(`<b>${esc(n.text)}</b>`, 'colspan="3" align="center"')}</tr>`));
 
-  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>Agenda Semanal</title>
-<style>@page Section1 { size: 21cm 29.7cm; margin: 1cm; } div.Section1 { page: Section1; } body { font-family: Arial, sans-serif; }</style></head>
-<body><div class="Section1">
-<table width="100%" cellspacing="0" cellpadding="10" bgcolor="#1B4A9B" style="border-collapse:collapse"><tr><td bgcolor="#1B4A9B">
+  const logoSrc = HAS_LOGO ? (forImage ? "data:image/png;base64," + LOGO.b64 : "file:///C:/logo.png") : "";
+  const frame = `<table width="100%" cellspacing="0" cellpadding="10" bgcolor="#1B4A9B" style="border-collapse:collapse"><tr><td bgcolor="#1B4A9B">
   <table width="100%" cellspacing="0" cellpadding="8" bgcolor="#FFFFFF" style="border-collapse:collapse"><tr>
-    <td width="33%">${HAS_LOGO ? `<img src="file:///C:/logo.png" width="195" height="${Math.round((195 * LOGO.h) / LOGO.w)}">` : "<b style=\"font-size:26pt;color:#1B4A9B\">SENAI</b>"}</td>
+    <td width="33%">${HAS_LOGO ? `<img src="${logoSrc}" width="195" height="${Math.round((195 * LOGO.h) / LOGO.w)}"/>` : "<b style=\"font-size:26pt;color:#1B4A9B\">SENAI</b>"}</td>
     <td width="34%" align="center" style="font-size:10pt"><b>AGENDA SEMANAL</b></td>
     <td width="33%" align="center" bgcolor="#B5C8EA" style="border:1px solid #1B4A9B;font-size:10pt"><b><i>${esc(d.title)}</i></b></td>
   </tr></table>
   <p style="margin:0;font-size:4pt">&nbsp;</p>
   <table width="100%" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF" style="border-collapse:collapse;border:1px solid #000">
-    <col width="13%"><col width="55%"><col width="32%">${rows}
+    <col width="13%"/><col width="55%"/><col width="32%"/>${rows}
   </table>
-</td></tr></table></div></body></html>`;
+</td></tr></table>`;
+  if (forImage) return frame;
+  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>Agenda Semanal</title>
+<style>@page Section1 { size: 21cm 29.7cm; margin: 1cm; } div.Section1 { page: Section1; } body { font-family: Arial, sans-serif; }</style></head>
+<body><div class="Section1">${frame}</div></body></html>`;
   const wrap = (s) => s.replace(/.{1,76}/g, "$&\r\n");
   const htmlB64 = btoa(unescape(encodeURIComponent(html)));
   const mht = [
@@ -427,8 +429,38 @@ function exportDoc() {
   saveBlob(new Blob([mht], { type: "application/msword" }), d.file + ".doc");
 }
 
+/* ---------- Imagem (PNG) ---------- */
+async function exportImage() {
+  const d = collect();
+  const W = 794, SCALE = 2; // A4 a 96dpi, renderizado em 2x
+  const markup = exportDoc(true);
+  const box = document.createElement("div");
+  box.setAttribute("xmlns", "http://www.w3.org/1999/xhtml");
+  box.style.cssText = `width:${W}px;padding:20px;background:#fff;font-family:Arial,sans-serif;box-sizing:border-box`;
+  box.innerHTML = markup;
+  const probe = box.cloneNode(true);
+  probe.style.cssText += ";position:fixed;left:-9999px;top:0";
+  document.body.append(probe);
+  await Promise.all([...probe.querySelectorAll("img")].map((i) => i.decode().catch(() => {})));
+  const H = Math.ceil(probe.getBoundingClientRect().height);
+  probe.remove();
+
+  const xhtml = new XMLSerializer().serializeToString(box);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><foreignObject width="100%" height="100%">${xhtml}</foreignObject></svg>`;
+  const img = new Image();
+  img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  await img.decode();
+  const canvas = document.createElement("canvas");
+  canvas.width = W * SCALE; canvas.height = H * SCALE;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  const blob = await new Promise((res) => canvas.toBlob(res, "image/png"));
+  saveBlob(blob, d.file + ".png");
+}
+
 const HAS_LOGO = typeof LOGO !== "undefined";
-const exporters = { pdf: [exportPdf, "jspdf"], xlsx: [exportXlsx, "ExcelJS"], doc: [exportDoc, null] };
+const exporters = { pdf: [exportPdf, "jspdf"], xlsx: [exportXlsx, "ExcelJS"], doc: [exportDoc, null], img: [exportImage, null] };
 $("btnDownload").onclick = (e) => { e.stopPropagation(); $("dlMenu").classList.toggle("open"); };
 document.addEventListener("click", () => $("dlMenu").classList.remove("open"));
 document.querySelectorAll(".menu-list button").forEach((b) => (b.onclick = async () => {

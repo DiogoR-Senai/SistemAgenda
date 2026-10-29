@@ -168,7 +168,7 @@ body {
 }
 .menu-list button:hover { background: #eef3fc; }
 .tag { font-size: 10px; color: #fff; padding: 4px 6px; border-radius: 5px; min-width: 34px; text-align: center; }
-.tag.pdf { background: #d33d3d; } .tag.xls { background: #1e8e50; } .tag.doc { background: #2b6cd1; }
+.tag.pdf { background: #d33d3d; } .tag.xls { background: #1e8e50; } .tag.doc { background: #2b6cd1; } .tag.img { background: #8a4fd3; }
 @media (max-width: 720px) { .btn span { display: none; } .btn.primary span { display: inline; } }
 
 .row.banner textarea { background: #fff1e6; border-color: var(--orange); font-weight: 700; text-align: center; }
